@@ -1,9 +1,16 @@
+const { default: axios } = require("axios");
+
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
-
+const cards = document.getElementsByClassName("cards")[0];
+axios.get('https://api.github.com/users/opa1164')
+.then(response => {
+  console.log(response.data);
+  cards.appendChild(cardCreator(response.data));
+});
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -28,7 +35,20 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  "tetondan",
+  "dustinmyers",
+  "justsml",
+  "luishrd",
+  "bigknell"];
+
+  followersArray.forEach(function(element){
+    axios.get(`https://api.github.com/users/${element}`)
+  .then(response => {
+  console.log(response.data);
+  cards.appendChild(cardCreator(response.data));
+});
+  })
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -49,6 +69,66 @@ const followersArray = [];
       </div>
     </div>
 */
+function cardCreator(obj)
+{
+  const card = lazyClass("div", "card");
+  const image = document.createElement("img");
+  image.src = obj.avatar_url;
+  card.appendChild(image);
+  const info = lazyClass("div", "card-info");
+  info.appendChild(lazyClassText("h3", "name", obj.name));
+  info.appendChild(lazyClassText("p", "username", obj.login));
+  info.appendChild(lazyText("p", `Location: ${obj.location}`));
+
+  const profile = lazyText("p", `Profile:`);
+  const link = lazyText("a", obj.url);
+  link.href = link.textContent;
+  profile.appendChild(link);
+  info.appendChild(profile);
+
+  info.appendChild(lazyText("p", `Followers: ${obj.followers}`));
+  info.appendChild(lazyText("p", `Following: ${obj.following}`));
+  info.appendChild(lazyText("p", `Bio: ${obj.bio}`));
+
+  card.appendChild(info);
+  console.log(card);
+  return card;
+}
+
+
+function lazyClass(type, className){
+  const element = document.createElement(type);
+  element.classList.add(className);
+  return element;
+}
+
+function lazyText(type, textCon){
+  const element = document.createElement(type);
+  if(textCon != null)
+  {
+    element.textContent = textCon;
+  }
+  else
+  {
+    element.textContent = "null";
+  }
+  return element;
+}
+
+function lazyClassText(type, className, textCon){
+  const element = document.createElement(type);
+  element.classList.add(className);
+  if(textCon != null)
+  {
+    element.textContent = textCon;
+  }
+  else
+  {
+    element.textContent = "null";
+  }
+  return element;
+}
+
 
 /*
   List of LS Instructors Github username's:
